@@ -3,38 +3,49 @@
 
 // Arvore versão struct
 
-typedef struct arv{
+typedef struct arv
+{
     int valor;
     Arv *Esq;
     Arv *Dir;
 
-} Arv;
+} * Arv;
 
-Arv *Cria_arv(int valor, Arv *Esq, Arv *Dir){
-    Arv *New_arv = (Arv*)malloc(sizeof(Arv));
+Arv Cria_arv(int valor, Arv Esq, Arv Dir)
+{
+    Arv New_arv = (Arv *)malloc(sizeof(Arv));
     New_arv->valor = valor;
     New_arv->Esq = Esq;
     New_arv->Dir = Dir;
-    
+
     return New_arv;
 }
 
-void imprime(Arv *raiz){
-    if(raiz != NULL){
+void imprime(Arv *raiz)
+{
+    if (raiz != NULL)
+    {
         printf("Valor: %d\n", raiz->valor);
         imprime(raiz->Esq);
         imprime(raiz->Dir);
     }
-    
 }
 
-int main(){
+int main()
+{
 
     printf("----- Teste Arv -----\n");
-    printf("Digite a qtd de elementos serão inseridos: ");
-    int qtd;
-    scanf("%d", qtd);
+    //printf("Digite a qtd de elementos serão inseridos: ");
+    int qtd = 3;
+    //scanf("%d", qtd);
 
+    Arv x = Cria_arv(1,
+                     Cria_arv(3,
+                              Cria_arv(2, NULL, NULL), NULL),
+                     Cria_arv(6,
+                              Cria_arv(0, NULL, NULL), NULL));
 
-   return 0;
+    imprime(x);
+
+    return 0;
 }
