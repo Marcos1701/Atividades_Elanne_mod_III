@@ -25,8 +25,12 @@ Arv *Cria_arv(int valor, Arv *esq = NULL, Arv *dir = NULL)
 
 int valor(Arv *A){ 
     if(A->dir == NULL && A->esq == NULL){
-        cout << A->valor << endl;
-        return !isalnum(A->valor);
+        //cout << A->valor << endl;
+        return isalnum(A->valor);
+    }
+
+    if(!isalnum(A->valor)){
+        return 0;
     }
     return (valor(A->dir) && (A->esq));
 }
