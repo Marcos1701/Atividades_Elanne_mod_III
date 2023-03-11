@@ -12,8 +12,7 @@ struct Arv
     Arv *dir;
 };
 
-
-Arv *Cria_arv(int valor, Arv *esq = NULL, Arv *dir = NULL)
+Arv *Cria_arv(char valor, Arv *esq = NULL, Arv *dir = NULL)
 {
     Arv *New_arv = (Arv *)malloc(sizeof(Arv));
     New_arv->valor = valor;
@@ -23,52 +22,46 @@ Arv *Cria_arv(int valor, Arv *esq = NULL, Arv *dir = NULL)
     return New_arv;
 }
 
-int valor(Arv *A){ 
-    if(A->dir == NULL && A->esq == NULL){
-        //cout << A->valor << endl;
-        return isalnum(A->valor);
+int valor(Arv *A)
+{
+    if (A == NULL)
+    {
+        return 1;
     }
-
-    if(!isalnum(A->valor)){
-        return 0;
+    if (A->dir == NULL && A->esq == NULL)
+    {
+        return isdigit(A->valor);
     }
     return (valor(A->dir) && (A->esq));
 }
 
+void imprime(Arv *raiz)
+{
+    if (raiz != NULL)
+    {
 
-void imprime(Arv *raiz){
-    if(raiz != NULL){
-        
         cout << " < " << raiz->valor;
         imprime(raiz->esq);
         imprime(raiz->dir);
         cout << " >";
-
-    }else{
+    }
+    else
+    {
         cout << " <> ";
     }
 }
-
 
 int main()
 {
     Arv *x = Cria_arv('*',
                       Cria_arv('/',
-                               Cria_arv('+',Cria_arv('5'), Cria_arv('3')), Cria_arv('4')),
+                               Cria_arv('+', Cria_arv('5'), Cria_arv('3')), Cria_arv('4')),
                       Cria_arv('-',
-                               Cria_arv('6'), Cria_arv('1')));
+                               Cria_arv('6'), Cria_arv('-')));
     int aux = valor(x);
     cout << "Arv X: " << endl;
     imprime(x);
 
-    //if(isdigit('1')){
-    //    cout << 'd' << endl;
-    //}
-//
-    //if(isdigit('-')){
-    //    cout << 'a' << endl;
-    //}
-    
 
     if (aux)
     {
