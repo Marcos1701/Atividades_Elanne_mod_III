@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stdlib.h>
-#include "Q13_7.h"
 
 using namespace std;
 
