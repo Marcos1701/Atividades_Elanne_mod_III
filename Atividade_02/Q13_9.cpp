@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "Q13_7.h"
+#include <vector>
 
 using namespace std;
 
@@ -23,35 +23,61 @@ Arv *Cria_arv(int valor, Arv *esq = NULL, Arv *dir = NULL)
     return New_arv;
 }
 
-Arv *exibe_dec(Arv *A){
-    Arv *esq;
-    Arv *dir;
-    if(A->esq){
-        esq = exibe_dec(A->esq);
-    }
-    if(A->dir){
-        dir = exibe_dec(A->dir);
-    }
-    Arv *dec;
-    if(esq->valor > dir->valor){
-        dec->valor = esq
+void ordena_vetor_decrescente(vector<int> &v)
+{ // bubble sort
+    int aux, tam = v.size(), k = 1;
+    for (int i = 0; i < tam; i++)
+    {
+        for (int j = 0; j < tam - k; j++)
+        {
+            if (v[j] >= v[j + 1])
+            {
+                aux = v[j];
+                v[j] = v[j + 1];
+                v[j + 1] = aux;
+            }
+        }
+        k++;
     }
 }
 
+void obter_valores_arv(Arv *A, vector<int> &v)
+{
+    if (A != NULL)
+    {
+        obter_valores_arv(A->esq, v);
+        v.push_back(A->valor);
+        obter_valores_arv(A->dir, v);
+    }
+}
 
-void imprime(Arv *raiz){
-    if(raiz != NULL){
-        
+void exibe_dec(Arv *raiz)
+{
+    vector<int> v;
+    obter_valores_arv(raiz, v);
+    ordena_vetor_decrescente(v);
+
+    for (int i = v.size() - 1; i >= 0; i--)
+    {
+        cout << v[i] << " ";
+    }
+}
+
+void imprime(Arv *raiz)
+{
+    if (raiz != NULL)
+    {
+
         cout << " < " << raiz->valor;
         imprime(raiz->esq);
         imprime(raiz->dir);
         cout << " >";
-
-    }else{
+    }
+    else
+    {
         cout << " <> ";
     }
 }
-
 
 int main()
 {
@@ -61,5 +87,5 @@ int main()
                       Cria_arv(6,
                                Cria_arv(0), Cria_arv(7)));
 
-
+    exibe_dec(x);
 }
