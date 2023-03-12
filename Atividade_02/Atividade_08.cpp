@@ -47,22 +47,23 @@ int calculaQuantNos(Arv *no)
     return qtd;
 }
 
-int ArvBinariaCheia(Arv *no, int altura)
-{
+
+int ArvBinariaCheia(Arv *no){
     if (no == NULL)
     {
         return 1;
     }
     if (no->esq == NULL && no->dir == NULL)
     {
-        return altura == 1;
+        return 1;
     }
     if (no->esq == NULL || no->dir == NULL)
     {
         return 0;
     }
-    return ArvBinariaCheia(no->esq, altura - 1) && ArvBinariaCheia(no->dir, altura - 1);
+    return ArvBinariaCheia(no->esq) && ArvBinariaCheia(no->dir);
 }
+
 
 int calculaQuantNosFolha(Arv *no)
 {
