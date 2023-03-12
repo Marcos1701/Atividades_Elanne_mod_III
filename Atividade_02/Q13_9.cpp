@@ -23,23 +23,51 @@ Arv *Cria_arv(int valor, Arv *esq = NULL, Arv *dir = NULL)
     return New_arv;
 }
 
-void ordena_vetor_decrescente(vector<int> &v)
-{ // bubble sort
-    int aux, tam = v.size(), k = 1;
-    for (int i = 0; i < tam; i++)
-    {
-        for (int j = 0; j < tam - k; j++)
-        {
-            if (v[j] >= v[j + 1])
-            {
-                aux = v[j];
-                v[j] = v[j + 1];
-                v[j + 1] = aux;
-            }
-        }
-        k++;
-    }
+void intercala(vector<int> &vetor, int inicio, int meio, int fim)
+{
+    int w[int((fim - inicio) + 1)];
+    int i = inicio, m = meio + 1, k = 0;
+    while (i <= meio && m <= fim)
+        if (vetor[i] >= vetor[m])
+            w[k++] = vetor[i++];
+        else
+            w[k++] = vetor[m++];
+
+    while (i <= meio)
+        w[k++] = vetor[i++];
+    while (m <= fim)
+        w[k++] = vetor[m++];
+    for (k = 0; k <= fim - inicio; k++)
+        vetor[inicio + k] = w[k];
 }
+
+void ordena_vetor_decrescente(vector<int> &v, int inicio, int fim)
+{ // merge sort
+    if (inicio >= fim)
+        return;
+    int meio = int((inicio + fim) / 2);
+    ordena_vetor_decrescente(v, inicio, meio);
+    ordena_vetor_decrescente(v, meio + 1, fim);
+    intercala(v, inicio, meio, fim);
+}
+
+// void ordena_vetor_decrescente(vector<int> &v)
+// { // bubble sort
+//     int aux, tam = v.size(), k = 1;
+//     for (int i = 0; i < tam; i++)
+//     {
+//         for (int j = 0; j < tam - k; j++)
+//         {
+//             if (v[j] >= v[j + 1])
+//             {
+//                 aux = v[j];
+//                 v[j] = v[j + 1];
+//                 v[j + 1] = aux;
+//             }
+//         }
+//         k++;
+//     }
+// }
 
 void obter_valores_arv(Arv *A, vector<int> &v)
 {
@@ -55,11 +83,12 @@ void exibe_dec(Arv *raiz)
 {
     vector<int> v;
     obter_valores_arv(raiz, v);
-    ordena_vetor_decrescente(v);
+    int tam = v.size();
+    ordena_vetor_decrescente(v, 0, tam - 1);
 
-    for (int i = v.size() - 1; i >= 0; i--)
+    for (int valor : v) // for of c++ (:
     {
-        cout << v[i] << " ";
+        cout << valor << " ";
     }
 }
 
@@ -83,7 +112,7 @@ int main()
 {
     Arv *x = Cria_arv(1,
                       Cria_arv(3,
-                               Cria_arv(2), Cria_arv(2)),
+                               Cria_arv(9), Cria_arv(2)),
                       Cria_arv(6,
                                Cria_arv(0), Cria_arv(7)));
 
