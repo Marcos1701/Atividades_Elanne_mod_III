@@ -1,3 +1,13 @@
+
+//Integrantes do grupo:
+// - Daniel Luca
+// - Marcos Eduardo
+// - Gabriel
+// - Gabriela
+// - Gilderlane 
+// - Israel
+//Representante: Marcos Eduardo
+
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
