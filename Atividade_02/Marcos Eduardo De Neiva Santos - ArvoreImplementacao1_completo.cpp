@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 using namespace std;
 
 typedef struct arv
@@ -35,40 +36,24 @@ void imprime(Arv *n)
     if (n != NULL)
     {
 
-        cout << "<" << n->info;
+        cout << " < " << n->info;
         imprime(n->esq);
         imprime(n->dir);
-        cout << ">";
+        cout << " > ";
     }
     else
-        cout << "<>";
+        cout << " <> ";
     return;
 }
 
-int calculaQuantNos(Arv *no)
-{
-    int qtd = 0;
-    if (no != NULL)
-    {
-        qtd++;
-        qtd += calculaQuantNos(no->esq);
-        qtd += calculaQuantNos(no->dir);
-    }
-    return qtd;
+void imprime_v2(Arv *v){
+
 }
 
-int calculaQuantNosFolha(Arv *no)
+int ArvBinariaCompleta(Arv *Arv)
 {
-    if (no == NULL)
-    {
-        return 0;
-    }
-    else if (no->dir == NULL && no->esq == NULL)
-    {
-        return 1;
-    }
+    return (alturaArvore(Arv) <= log(calculaQuantNos(Arv)) + 1);
 
-    return calculaQuantNosFolha(no->esq) + calculaQuantNosFolha(no->dir);
 }
 
 int alturaArvore(Arv *no)
@@ -86,61 +71,16 @@ int alturaArvore(Arv *no)
     return dir + 1;
 }
 
-Arv *procura(Arv *no, char valor)
+int calculaQuantNos(Arv *no)
 {
-    if (no == NULL)
+    int qtd = 0;
+    if (no != NULL)
     {
-        return NULL;
+        qtd++;
+        qtd += calculaQuantNos(no->esq);
+        qtd += calculaQuantNos(no->dir);
     }
-    if (no->info == valor)
-    {
-        return no;
-    }
-    Arv *retorno = procura(no->esq, valor);
-    if (retorno)
-    {
-        return retorno;
-    }
-    return procura(no->dir, valor);
-}
-
-int libera_arvore(Arv *no)
-{
-    if (no == NULL)
-    {
-        return 0;
-    }
-    libera_arvore(no->esq);
-    libera_arvore(no->dir);
-    free(no);
-    return 1;
-}
-
-// remove o nó procurado. Se o nó tiver filhos, remova também os filhos
-int removeSubArvore(Arv *no, char valor)
-{
-    if (no == NULL)
-    {
-        return 0;
-    }
-    if (no->dir->info == valor)
-    {
-        libera_arvore(no->dir);
-        no->dir = NULL;
-        return 1;
-    }
-    else if (no->esq->info == valor)
-    {
-        libera_arvore(no->esq);
-        no->esq = NULL;
-        return 1;
-    }
-    int retorno = removeSubArvore(no->esq, valor);
-    if (retorno)
-    {
-        return retorno;
-    }
-    return removeSubArvore(no->dir, valor);
+    return qtd;
 }
 
 main()
@@ -150,21 +90,48 @@ main()
                     arvore('g',
                            arvore('d'), arvore('y')),
                     arvore('k',
-                           arvore('t'), arvore('m')));
+                           arvore('t')));
 
-    cout << "\nArvore antes da remocao de k: " << endl;
+                           /* Arvore c
+                             ('c')
+                           /       \
+                        ('g')       ('k')
+                       /     \     /     \ 
+                    ('d')  ('y')  ('t')   ('m')*/
+
+    Arv *x = arvore('x',
+                    arvore('h', NULL, arvore('y', arvore('k'))),
+                    arvore('e',
+                           arvore('w')));
+
+ /*        Arvore x
+            ('x')
+           /      \
+          /        \
+      ('h')        ('e')
+          \       /  
+        ('y')   ('w') 
+        /  
+     ('k')
+            */
+
+    cout << "Arvore 'c': " << endl;
     imprime(c);
-    cout << "\n Qtd nos: " << calculaQuantNos(c);
 
-    if (removeSubArvore(c, 'k'))
-    {
-        cout << "\n\nNo removido com sucesso, Arvore apos a remocao:"
-             << endl;
-        imprime(c);
-        cout << "\n Qtd atual de nos: " << calculaQuantNos(c);
-    }
+    cout << "\nArvore 'x': " << endl;
+    imprime(x);
+
+    if (ArvBinariaCompleta(c))
+        cout << endl
+             << "\nA Arvore Binaria 'c' esta completa" << endl;
     else
-    {
-        cout << "\nOps, o no nao foi encontrado..." << endl;
-    }
+        cout << endl
+             << "\nOps, a Arvore Binaria 'c' esta incompleta\n" << endl;
+
+    if (ArvBinariaCompleta(x))
+        cout << endl
+             << "\nA Arvore Binaria 'x' esta completa" << endl;
+    else
+        cout << endl
+             << "\nOps, a Arvore Binaria 'x' esta incompleta\n" << endl;
 }
