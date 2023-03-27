@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 using namespace std;
 
 typedef struct arv
@@ -45,22 +46,18 @@ void imprime(Arv *n)
     return;
 }
 
-int ArvBinariaCompleta(Arv *no, int altura)
+int calculaQuantNos(Arv *no)
 {
-    if (no == NULL)
+    int qtd = 0;
+    if (no != NULL)
     {
-        return 1;
+        qtd++;
+        qtd += calculaQuantNos(no->esq);
+        qtd += calculaQuantNos(no->dir);
     }
-    if (no->esq == NULL && no->dir == NULL)
-    {
-        return altura == 1;
-    }
-    if (no->esq == NULL || no->dir == NULL)
-    {
-        return 0;
-    }
-    return ArvBinariaCompleta(no->esq, altura - 1) && ArvBinariaCompleta(no->dir, altura - 1);
+    return qtd;
 }
+
 
 int alturaArvore(Arv *no)
 {
@@ -76,6 +73,13 @@ int alturaArvore(Arv *no)
     }
     return dir + 1;
 }
+
+int ArvBinariaCompleta(Arv *Arv)
+{
+    return (alturaArvore(Arv) >= (log(calculaQuantNos(Arv)) + 1));
+
+}
+
 
 main()
 {
@@ -114,14 +118,14 @@ main()
     cout << "\nArvore 'x': " << endl;
     imprime(x);
 
-    if (ArvBinariaCompleta(c, alturaArvore(c)))
+    if (ArvBinariaCompleta(c))
         cout << endl
              << "\nA Arvore Binaria 'c' esta completa" << endl;
     else
         cout << endl
              << "\nOps, a Arvore Binaria 'c' esta incompleta\n" << endl;
 
-    if (ArvBinariaCompleta(x, alturaArvore(x)))
+    if (ArvBinariaCompleta(x))
         cout << endl
              << "\nA Arvore Binaria 'x' esta completa" << endl;
     else
