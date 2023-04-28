@@ -78,17 +78,39 @@ class Arvore {
 					
 			}
 		
-		void percusoExtensao(){
+		void percusoExtensao(ArvoreNo<T> *p){
+            queue<ArvoreNo<T>*> aux;
+            aux.push(p);
+
+            while (!aux.empty())
+            {
+                visit(p);
+
+            }
+            
+
 			
 		}
 		
 		
 		void preorder(ArvoreNo<T> *p){
-			if (p!=0) {
-				visit(p);
-				preorder(p->left);
-				preorder(p->right);
-			}
+			//if (p!=0) {
+			//	visit(p);
+			//	preorder(p->left);
+			//	preorder(p->right);
+			//}
+            queue<ArvoreNo<T>*> aux = new queue;
+            aux.push(p);
+
+            while(!aux.empty()){
+                visit(p);
+                if(p->left){
+                    aux->push(p->left);
+                }
+                if(p->right){
+                    aux->push(p->right);
+                }
+            }
 			
 		}
 	
@@ -105,12 +127,10 @@ main(){
     a->insert(31);
     a->insert(29);
 //	a->percusoExtensao();
-//	a->preorder(a->getRoot());
-	int procurado= a->search(200);
-	if (procurado==0)
-	    cout<<"Nao achou ";
-	else
-	    cout<<procurado<<" encontrado!!";	
-	a->
+	a->preorder(a->getRoot());
+	//int procurado= a->search(200);
+	//if (procurado==0)
+	 //   cout<<"Nao achou ";
+	//else
+	//    cout<<procurado<<" encontrado!!";	
 }
-
