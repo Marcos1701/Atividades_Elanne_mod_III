@@ -101,14 +101,14 @@ public:
 
         while (!aux.empty())
         {
-            p = aux.front();
+            ArvoreNo<T> *q = aux.front();
             aux.pop();
-            visit(p);
+            visit(q);
 
-            if (p->left != 0)
-                aux.push(p->left);
-            if (p->right != 0)
-                aux.push(p->right);
+            if (q->left != 0)
+                aux.push(q->left);
+            if (q->right != 0)
+                aux.push(q->right);
         }
     }
 
@@ -119,16 +119,26 @@ public:
 
         while (!aux.empty())
         {
-            p = aux.front();
+            ArvoreNo<T> *q = aux.front();
             aux.pop();
-            visit(p);
+            visit(q);
 
-            if (p->left != 0)
-                aux.push(p->left);
-            if (p->right != 0)
-                aux.push(p->right);
+            if (q->left != 0)
+                aux.push(q->left);
+            if (q->right != 0)
+                aux.push(q->right);
         }
     }
+    void preorder2(ArvoreNo<T> *p)
+{
+    if (p != 0)
+    {
+        visit(p);
+        preorder(p->left);
+        preorder(p->right);
+    }
+}
+
 
     void posorder(ArvoreNo<T> *p)
     {
@@ -137,38 +147,34 @@ public:
 
         while (!aux.empty())
         {
-            visit(p);
+            ArvoreNo<T> *q = aux.front();
 
-            if (p->left)
-                aux.push(p->left);
-            if (p->right)
-                aux.push(p->right);
-
-            aux.pop();
-            p = aux.front();
-        }
-    }
-    void exibe_desenho_arv_sem_recursao(ArvoreNo<T> *p)
-    {
-        if (p != 0)
-        {
-            queue<ArvoreNo<T> *> aux;
-            aux.push(p);
-            while (!aux.empty())
-            {
-                p = aux.front();
+            if (q->left)
+                aux.push(q->left);
+            else if (q->right)
+                aux.push(q->right);
+            else{
+                visit(q);
                 aux.pop();
-                cout << p->el << " ";
-                if (p->left != 0)
-                    aux.push(p->left);
-                if (p->right != 0)
-                    aux.push(p->right);
             }
+
+            
         }
     }
+
+    void posorder2(ArvoreNo<T> *p)
+{
+    if (p != 0)
+    {
+        posorder(p->left);
+        posorder(p->right);
+        visit(p);
+    }
+}
+
 };
 
-main()
+int main()
 {
 
     Arvore<int> *a = new Arvore<int>();
@@ -178,19 +184,25 @@ main()
     a->insert(2);
     a->insert(12);
     a->insert(20);
-    // a->insert(4);
-    // a->insert(1);
-    // a->insert(3);
-    // a->insert(2);
-    // a->insert(6);
-    // a->insert(7);
-    // a->insert(5);
-    // a->insert(29);
-    a->exibe_desenho_arv_sem_recursao(a->getRoot());
-    cout << "\nPersurso em extensao: " << endl;
-    a->percusoExtensao(a->getRoot());
-    cout << "\nPre-order: " << endl;
+     a->insert(4);
+     a->insert(1);
+     a->insert(3);
+     a->insert(2);
+     a->insert(6);
+     a->insert(7);
+     a->insert(5);
+     a->insert(29);
+    //a->exibe_desenho_arv_sem_recursao(a->getRoot());
+    //cout << "\nPersurso em extensao: " << endl;
+    //a->percusoExtensao(a->getRoot());
+    cout << "\n\nPre-order1: " << endl;
     a->preorder(a->getRoot());
+    cout << "\n\nPre-order2: " << endl;
+    a->preorder2(a->getRoot());
+    cout << "\n\nPos-order1: " << endl;
+    a->posorder(a->getRoot());
+    cout << "\n\nPos-order2: " << endl;
+    a->posorder(a->getRoot());
     // int procurado= a->search(200);
     // if (procurado==0)
     //    cout<<"Nao achou ";
