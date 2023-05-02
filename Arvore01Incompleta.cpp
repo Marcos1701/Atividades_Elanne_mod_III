@@ -1,4 +1,5 @@
 #include <queue>
+#include <stack>
 #include <iostream>
 
 using namespace std;
@@ -114,6 +115,35 @@ public:
 
     void preorder(ArvoreNo<T> *p)
     {
+        if (p == 0)
+        {
+            return;
+        }
+
+        stack<ArvoreNo<T> *> s;
+        s.push(p);
+
+        while (!s.empty())
+        {
+            ArvoreNo<T> *curr = s.top();
+            s.pop();
+
+            visit(curr);
+
+            if (curr->right != 0)
+            {
+                s.push(curr->right);
+            }
+
+            if (curr->left != 0)
+            {
+                s.push(curr->left);
+            }
+        }
+    }
+
+    void posorder(ArvoreNo<T> *p)
+    {
         queue<ArvoreNo<T> *> aux;
         aux.push(p);
 
@@ -129,49 +159,6 @@ public:
                 aux.push(q->right);
         }
     }
-    void preorder2(ArvoreNo<T> *p)
-{
-    if (p != 0)
-    {
-        visit(p);
-        preorder(p->left);
-        preorder(p->right);
-    }
-}
-
-
-    void posorder(ArvoreNo<T> *p)
-    {
-        queue<ArvoreNo<T> *> aux;
-        aux.push(p);
-
-        while (!aux.empty())
-        {
-            ArvoreNo<T> *q = aux.front();
-
-            if (q->left)
-                aux.push(q->left);
-            else if (q->right)
-                aux.push(q->right);
-            else{
-                visit(q);
-                aux.pop();
-            }
-
-            
-        }
-    }
-
-    void posorder2(ArvoreNo<T> *p)
-{
-    if (p != 0)
-    {
-        posorder(p->left);
-        posorder(p->right);
-        visit(p);
-    }
-}
-
 };
 
 int main()
@@ -184,24 +171,20 @@ int main()
     a->insert(2);
     a->insert(12);
     a->insert(20);
-     a->insert(4);
-     a->insert(1);
-     a->insert(3);
-     a->insert(2);
-     a->insert(6);
-     a->insert(7);
-     a->insert(5);
-     a->insert(29);
-    //a->exibe_desenho_arv_sem_recursao(a->getRoot());
-    //cout << "\nPersurso em extensao: " << endl;
-    //a->percusoExtensao(a->getRoot());
-    cout << "\n\nPre-order1: " << endl;
+    a->insert(4);
+    a->insert(1);
+    a->insert(3);
+    a->insert(2);
+    a->insert(6);
+    a->insert(7);
+    a->insert(5);
+    a->insert(29);
+    // a->exibe_desenho_arv_sem_recursao(a->getRoot());
+    cout << "\nPersurso em extensao: " << endl;
+    a->percusoExtensao(a->getRoot());
+    cout << "\n\nPre-order: " << endl;
     a->preorder(a->getRoot());
-    cout << "\n\nPre-order2: " << endl;
-    a->preorder2(a->getRoot());
-    cout << "\n\nPos-order1: " << endl;
-    a->posorder(a->getRoot());
-    cout << "\n\nPos-order2: " << endl;
+    cout << "\n\nPos-order: " << endl;
     a->posorder(a->getRoot());
     // int procurado= a->search(200);
     // if (procurado==0)
