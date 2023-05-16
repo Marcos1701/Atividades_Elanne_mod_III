@@ -29,7 +29,7 @@ public:
     {
         root = 0;
     }
-    void insert(T el); // Pigura 6.24
+    void insert(T el);
     void inorder();
     void preorder();
     void postorder();
@@ -76,7 +76,6 @@ void ThreadedTree<T>::insert(T el)
         else
         {
             prev->right = tmp;
-            // Update the thread of the current node
             ThreadedNode<T> *succ = p->right;
             tmp->right = succ;
             tmp->successor = 1;
