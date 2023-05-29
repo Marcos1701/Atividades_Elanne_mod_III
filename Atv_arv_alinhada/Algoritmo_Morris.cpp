@@ -97,6 +97,16 @@ public:
 
     void InorderMorris()
     {
+        /*O algoritmo de Morris percorre a árvore em ordem, visitando os nós em sequência, 
+          sem usar uma pilha explícita ou recursão extra.
+          
+          caracteristicas do algoritmo de Morris:
+          - Percurso sem uso de estruturas adicionais (pilha, fila..);
+          - Abordagem baseada em predecessor;
+          - Baixa complexidade
+          */
+        
+     
         ArvoreNo<T> *atual = root;
 
         while (atual != 0)
