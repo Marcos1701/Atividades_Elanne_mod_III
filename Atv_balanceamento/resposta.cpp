@@ -98,39 +98,84 @@ public:
         }
         return h;
     }
+
+    void balancearPorVetor(ArvoreNo<T> *p, T *vet, int tam)
+    {
+        int i = 0;
+        queue<ArvoreNo<T> *> fila;
+        fila.push(p);
+        while (!fila.empty())
+        {
+            ArvoreNo<T> *no = fila.front();
+            fila.pop();
+            vet[i] = no->el;
+            i++;
+            if (no->left != 0)
+                fila.push(no->left);
+            if (no->right != 0)
+                fila.push(no->right);
+        }
+        sort(vet, vet + tam);
+        p->el = vet[tam / 2];
+        p->left = 0;
+        p->right = 0;
+        for (int i = 0; i < tam; i++)
+        {
+            if (vet[i] != p->el)
+                p->el = vet[i];
+        }
+    }
 };
 
-void balancear(ArvoreNo<int> *p, int *vet, int tam)
-{
-    int i = 0;
-    queue<ArvoreNo<int> *> fila;
-    fila.push(p);
-    while (!fila.empty())
-    {
-        ArvoreNo<int> *no = fila.front();
-        fila.pop();
-        vet[i] = no->el;
-        i++;
-        if (no->left != 0)
-            fila.push(no->left);
-        if (no->right != 0)
-            fila.push(no->right);
+// Função auxiliar para realizar a rotação para a direita
+ArvoreNo<int>* rotateRight(ArvoreNo<int>* root) {
+    ArvoreNo<int>* newRoot = root->left;
+    root->left = newRoot->right;
+    newRoot->right = root;
+    return newRoot;
+}
+
+// Função para realizar o balanceamento DSW
+void DSW(ArvoreNo<int>* root) {
+    // Passo 1: Realizar rotações para a direita
+    ArvoreNo<int>* newRoot = root;
+    while (newRoot->left) {
+        newRoot = rotateRight(newRoot);
     }
-    sort(vet, vet + tam);
-    p->el = vet[tam / 2];
-    p->left = 0;
-    p->right = 0;
-    for (int i = 0; i < tam; i++)
-    {
-        if (vet[i] != p->el)
-            p->el = vet[i];
+
+    // Passo 2: Realizar rotações para a esquerda
+    int n = 0;
+    ArvoreNo<int>* aux = newRoot;
+    while (aux->right) {
+        aux = aux->right;
+        n++;
+    }
+    n = n / 2;
+    for (int i = 0; i < n; i++) {
+        aux = newRoot;
+        while (aux->right) {
+            aux = aux->right;
+        }
+        aux->right = aux->left;
+        aux->left = NULL;
+        newRoot = rotateRight(newRoot);
+    }
+
+}
+void printInOrder(ArvoreNo<int>* root) {
+    if (root) {
+        printInOrder(root->left);
+        cout << root->el << " ";
+        printInOrder(root->right);
     }
 }
+
 
 int main()
 {
 
     Arvore<int> *a = new Arvore<int>();
+    Arvore<int> *b = new Arvore<int>();
     // 7, 6, 22, 14, 40, 63.
     a->insert(7);
     a->insert(6);
@@ -138,6 +183,13 @@ int main()
     a->insert(14);
     a->insert(40);
     a->insert(63);
+
+    b->insert(7);
+    b->insert(6);
+    b->insert(22);
+    b->insert(14);
+    b->insert(40);
+    b->insert(63);
 
     // 1.1) Qual a altura da árvore resultante?
     // R- 3
@@ -155,6 +207,26 @@ int main()
     // reordenação dos dados para balancear a árvore.
     // OBS: Use um método sort para ordenar o vetor resultante.
     // R- 6 7 14 22 40 63
+
+    int tam = a->altura(a->getRoot());
+    int *vet = new int[tam];
+    a->balancearPorVetor(a->getRoot(), vet, tam);
+    cout << "\nArvore 'A' balanceada via vetor: " << endl;
+    a->ImprimeArv(a->getRoot());
+
+    // 1.5) No caso da árvore resultante NÃO ESTAR balanceada aplique o algoritmo de
+    // reordenação dos dados para balancear a árvore.
+    // OBS: Aplique o percurso in-order para montar o vetor resultante.
+    // R- 6 7 14 22 40 63
+    tam = b->altura(b->getRoot());
+    int *vet2 = new int[tam];
+    DSW(b->getRoot());
+    cout << "\nArvore 'B' balanceada via inorder: " << endl;
+    b->ImprimeArv(b->getRoot());
+
+    // 1.6) Compare os resultados em 1.4 e 1.5. As árvores resultantes estão balanceadas? Elas são
+    // iguais?
+    // R- Sim, estão balanceadas e são iguais.
 
     cout << endl;
     return 0;
