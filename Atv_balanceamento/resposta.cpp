@@ -1,22 +1,8 @@
-// 1) Inclua os seguintes valores na seguinte ordem em uma árvore binária:
-// 7, 6, 22, 14, 40, 63.
-// 1.1) Qual a altura da árvore resultante?
-// 1.2) Mostre a árvore resultante.
-// 1.3) A árvore resultante está balanceada ou não?
-// 1.4) No caso da árvore resultante NÃO ESTAR balanceada aplique o algoritmo de
-// reordenação dos dados para balancear a árvore.
-// OBS: Use um método sort para ordenar o vetor resultante.
-
-// 1.5) No caso da árvore resultante NÃO ESTAR balanceada aplique o algoritmo de
-// reordenação dos dados para balancear a árvore.
-// OBS: Aplique o percurso in-order para montar o vetor resultante.
-
-// 1.6) Compare os resultados em 1.4 e 1.5. As árvores resultantes estão balanceadas? Elas são
-// iguais?
-
 #include <queue>
 #include <stack>
 #include <iostream>
+#include <cmath>
+#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -88,95 +74,200 @@ public:
         }
     }
 
-    int altura(ArvoreNo<T> *p, int h = 0)
+    int altura(ArvoreNo<T> *p)
     {
-        if (p != 0)
+        if (p == NULL)
         {
-            h++;
-            altura(p->left, h);
-            altura(p->right, h);
+            return 0;
         }
-        return h;
+        int alturaEsquerda = altura(p->left);
+        int alturaDireita = altura(p->right);
+        return max(alturaEsquerda, alturaDireita) + 1;
     }
 
-    void balancearPorVetor(ArvoreNo<T> *p, T *vet, int tam)
+    int quantNos(ArvoreNo<T> *p)
     {
-        int i = 0;
-        queue<ArvoreNo<T> *> fila;
-        fila.push(p);
-        while (!fila.empty())
+        if (p == NULL)
         {
-            ArvoreNo<T> *no = fila.front();
-            fila.pop();
-            vet[i] = no->el;
-            i++;
-            if (no->left != 0)
-                fila.push(no->left);
-            if (no->right != 0)
-                fila.push(no->right);
+            return 0;
         }
-        sort(vet, vet + tam);
-        p->el = vet[tam / 2];
-        p->left = 0;
-        p->right = 0;
-        for (int i = 0; i < tam; i++)
+        int quantEsquerda = quantNos(p->left);
+        int quantDireita = quantNos(p->right);
+        return quantEsquerda + quantDireita + 1;
+    }
+
+    vector<T> getElements()
+    {
+        vector<T> v;
+        queue<ArvoreNo<T> *> fila;
+        ArvoreNo<T> *p = root;
+        if (p != 0)
         {
-            if (vet[i] != p->el)
-                p->el = vet[i];
+            fila.push(p);
+            while (!fila.empty())
+            {
+                p = fila.front();
+                fila.pop();
+                v.push_back(p->el);
+                if (p->left != 0)
+                    fila.push(p->left);
+                if (p->right != 0)
+                    fila.push(p->right);
+            }
+        }
+        return v;
+    }
+
+    void balancearporVetor()
+    {
+        vector<T> v = getElements();
+        int inicio = 0;
+        int fim = v.size() - 1;
+        sort(v.begin(), v.end());
+        root = 0;
+        balancear(v, inicio, fim);
+    }
+
+    void balancearViaDSW()
+    {
+        // Passo 1: Converter a árvore em uma lista encadeada
+        ArvoreNo<T> *tmp = root;
+        vector<ArvoreNo<T> *> lista;
+
+        while (tmp != nullptr)
+        {
+            if (tmp->left != nullptr)
+            {
+                ArvoreNo<T> *q = tmp->left;
+                tmp->left = q->right;
+                q->right = tmp;
+                tmp = q;
+            }
+            else
+            {
+                lista.push_back(tmp);
+                tmp = tmp->right;
+            }
+        }
+
+        // Passo 2: Reorganizar a lista encadeada para formar uma árvore balanceada
+        int n = lista.size();
+
+        root = nullptr;
+        reconstruirArvoreBalanceada(lista, 0, n - 1);
+    }
+
+    void InorderMorris()
+    {
+        ArvoreNo<T> *atual = root;
+
+        while (atual != 0)
+        {
+            if (atual->left == 0)
+            {
+                cout << atual->el << " ";
+                atual = atual->right;
+            }
+            else
+            {
+                ArvoreNo<T> *predecessor = atual->left;
+                while (predecessor->right != 0 && predecessor->right != atual)
+                {
+                    predecessor = predecessor->right;
+                }
+
+                if (predecessor->right == 0)
+                {
+                    predecessor->right = atual;
+                    atual = atual->left;
+                }
+                else
+                {
+                    predecessor->right = 0;
+                    cout << atual->el << " ";
+                    atual = atual->right;
+                }
+            }
+        }
+    }
+
+private:
+    void balancear(vector<T> &v, int inicio, int fim)
+    {
+        if (inicio <= fim)
+        {
+            int meio = (inicio + fim) / 2;
+            insert(v[meio]);
+            balancear(v, inicio, meio - 1);
+            balancear(v, meio + 1, fim);
+        }
+    }
+
+    ArvoreNo<T> *rotacaoDireita(ArvoreNo<T> *p)
+    {
+        ArvoreNo<T> *q = p->left;
+        p->left = q->right;
+        q->right = p;
+        return q;
+    }
+
+    ArvoreNo<T> *rotacaoEsquerda(ArvoreNo<T> *p)
+    {
+        ArvoreNo<T> *q = p->right;
+        p->right = q->left;
+        q->left = p;
+        return q;
+    }
+
+    void reconstruirArvoreBalanceada(vector<ArvoreNo<T> *> &lista, int inicio, int fim)
+    {
+        if (inicio <= fim)
+        {
+            int meio = (inicio + fim) / 2;
+            inserirElemento(lista[meio]);
+
+            reconstruirArvoreBalanceada(lista, inicio, meio - 1);
+            reconstruirArvoreBalanceada(lista, meio + 1, fim);
+        }
+    }
+
+    void inserirElemento(ArvoreNo<T> *no)
+    {
+        if (root == nullptr)
+        {
+            root = no;
+            no->left = nullptr;
+            no->right = nullptr;
+        }
+        else
+        {
+            ArvoreNo<T> *p = root;
+            ArvoreNo<T> *prev = nullptr;
+
+            while (p != nullptr)
+            {
+                prev = p;
+                if (no->el < p->el)
+                    p = p->left;
+                else
+                    p = p->right;
+            }
+
+            if (no->el < prev->el)
+                prev->left = no;
+            else
+                prev->right = no;
+
+            no->left = nullptr;
+            no->right = nullptr;
         }
     }
 };
 
-// Função auxiliar para realizar a rotação para a direita
-ArvoreNo<int>* rotateRight(ArvoreNo<int>* root) {
-    ArvoreNo<int>* newRoot = root->left;
-    root->left = newRoot->right;
-    newRoot->right = root;
-    return newRoot;
-}
-
-// Função para realizar o balanceamento DSW
-void DSW(ArvoreNo<int>* root) {
-    // Passo 1: Realizar rotações para a direita
-    ArvoreNo<int>* newRoot = root;
-    while (newRoot->left) {
-        newRoot = rotateRight(newRoot);
-    }
-
-    // Passo 2: Realizar rotações para a esquerda
-    int n = 0;
-    ArvoreNo<int>* aux = newRoot;
-    while (aux->right) {
-        aux = aux->right;
-        n++;
-    }
-    n = n / 2;
-    for (int i = 0; i < n; i++) {
-        aux = newRoot;
-        while (aux->right) {
-            aux = aux->right;
-        }
-        aux->right = aux->left;
-        aux->left = NULL;
-        newRoot = rotateRight(newRoot);
-    }
-
-}
-void printInOrder(ArvoreNo<int>* root) {
-    if (root) {
-        printInOrder(root->left);
-        cout << root->el << " ";
-        printInOrder(root->right);
-    }
-}
-
-
 int main()
 {
-
     Arvore<int> *a = new Arvore<int>();
     Arvore<int> *b = new Arvore<int>();
-    // 7, 6, 22, 14, 40, 63.
     a->insert(7);
     a->insert(6);
     a->insert(22);
@@ -191,43 +282,39 @@ int main()
     b->insert(40);
     b->insert(63);
 
-    // 1.1) Qual a altura da árvore resultante?
-    // R- 3
     cout << "Altura da arvore: " << a->altura(a->getRoot()) << endl;
 
-    // 1.2) Mostre a árvore resultante.
-    // R- 7 6 22 14 40 63
-    cout << "Arvore: " << endl;
+    cout << "Arvore resultante: ";
     a->ImprimeArv(a->getRoot());
-
-    // 1.3) A árvore resultante está balanceada ou não?
-    // R- Não
-
-    // 1.4) No caso da árvore resultante NÃO ESTAR balanceada aplique o algoritmo de
-    // reordenação dos dados para balancear a árvore.
-    // OBS: Use um método sort para ordenar o vetor resultante.
-    // R- 6 7 14 22 40 63
-
-    int tam = a->altura(a->getRoot());
-    int *vet = new int[tam];
-    a->balancearPorVetor(a->getRoot(), vet, tam);
-    cout << "\nArvore 'A' balanceada via vetor: " << endl;
-    a->ImprimeArv(a->getRoot());
-
-    // 1.5) No caso da árvore resultante NÃO ESTAR balanceada aplique o algoritmo de
-    // reordenação dos dados para balancear a árvore.
-    // OBS: Aplique o percurso in-order para montar o vetor resultante.
-    // R- 6 7 14 22 40 63
-    tam = b->altura(b->getRoot());
-    int *vet2 = new int[tam];
-    DSW(b->getRoot());
-    cout << "\nArvore 'B' balanceada via inorder: " << endl;
-    b->ImprimeArv(b->getRoot());
-
-    // 1.6) Compare os resultados em 1.4 e 1.5. As árvores resultantes estão balanceadas? Elas são
-    // iguais?
-    // R- Sim, estão balanceadas e são iguais.
-
     cout << endl;
+
+    cout << "A arvore resultante esta balanceada? ";
+    if (a->altura(a->getRoot()->left) - a->altura(a->getRoot()->right) <= 1)
+        cout << "Sim" << endl;
+    else
+        cout << "Nao" << endl;
+
+    cout << "Arvore A balanceada por vetor: ";
+    a->balancearporVetor();
+    a->InorderMorris();
+    cout << endl;
+
+    cout << "Arvore B balanceada por inorder: ";
+    b->balancearViaDSW();
+    b->InorderMorris();
+    cout << endl;
+
+    cout << "As arvores resultantes estao balanceadas? ";
+    if (a->altura(a->getRoot()->left) - a->altura(a->getRoot()->right) <= 1)
+        cout << "Sim" << endl;
+    else
+        cout << "Nao" << endl;
+
+    cout << "As arvores resultantes sao iguais? ";
+    if (a->getElements() == b->getElements())
+        cout << "Sim" << endl;
+    else
+        cout << "Nao" << endl;
+
     return 0;
 }
